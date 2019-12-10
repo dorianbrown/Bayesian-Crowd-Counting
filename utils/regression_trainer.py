@@ -36,7 +36,9 @@ class RegTrainer(Trainer):
             assert self.device_count == 1
             logging.info('using {} gpus'.format(self.device_count))
         else:
-            raise Exception("gpu is not available")
+            self.device = torch.device("cpu")
+            self.device_count = 1
+            logging.info(f"using cpu with {torch.get_num_threads()} threads")
 
         self.downsample_ratio = args.downsample_ratio
         self.datasets = {x: Crowd(os.path.join(args.data_dir, x),
@@ -52,7 +54,7 @@ class RegTrainer(Trainer):
                                           num_workers=args.num_workers*self.device_count,
                                           pin_memory=(True if x == 'train' else False))
                             for x in ['train', 'val']}
-        self.model =vgg19()
+        self.model = vgg19()
         self.model.to(self.device)
         self.optimizer = optim.Adam(self.model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 
@@ -85,11 +87,11 @@ class RegTrainer(Trainer):
         for epoch in range(self.start_epoch, args.max_epoch):
             logging.info('-'*5 + 'Epoch {}/{}'.format(epoch, args.max_epoch - 1) + '-'*5)
             self.epoch = epoch
-            self.train_eopch()
+            self.train_epoch()
             if epoch % args.val_epoch == 0 and epoch >= args.val_start:
                 self.val_epoch()
 
-    def train_eopch(self):
+    def train_epoch(self):
         epoch_loss = AverageMeter()
         epoch_mae = AverageMeter()
         epoch_mse = AverageMeter()
