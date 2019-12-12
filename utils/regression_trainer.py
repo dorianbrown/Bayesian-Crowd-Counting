@@ -162,6 +162,3 @@ class RegTrainer(Trainer):
                                                                                  self.best_mae,
                                                                                  self.epoch))
             torch.save(model_state_dic, os.path.join(self.save_dir, 'best_model.pth'))
-
-
-

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from scipy.io import loadmat
 from PIL import Image
 import numpy as np

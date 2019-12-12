@@ -26,7 +26,6 @@ def cal_innner_area(c_left, c_up, c_right, c_down, bbox):
     return inner_area
 
 
-
 class Crowd(data.Dataset):
     def __init__(self, root_path, crop_size,
                  downsample_ratio, is_gray=False,

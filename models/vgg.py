@@ -8,6 +8,7 @@ model_urls = {
     'vgg19': 'https://download.pytorch.org/models/vgg19-dcbb9e9d.pth',
 }
 
+
 class VGG(nn.Module):
     def __init__(self, features):
         super(VGG, self).__init__()
@@ -42,9 +43,11 @@ def make_layers(cfg, batch_norm=False):
             in_channels = v
     return nn.Sequential(*layers)
 
+
 cfg = {
     'E': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512]
 }
+
 
 def vgg19():
     """VGG 19-layer model (configuration "E")
