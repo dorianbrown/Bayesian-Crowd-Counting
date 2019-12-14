@@ -127,9 +127,9 @@ class RegTrainer(Trainer):
         logging.info('Epoch {} Train, Loss: {:.2f}, MSE: {:.2f} MAE: {:.2f}, Cost {:.1f} sec'
                      .format(self.epoch, epoch_loss.get_avg(), np.sqrt(epoch_mse.get_avg()), epoch_mae.get_avg(),
                              time.time()-epoch_start))
-        self.writer.add_scalar('Loss/train', epoch_loss.get_avg())
-        self.writer.add_scalar('MSE/train', np.sqrt(epoch_mse.get_avg()))
-        self.writer.add_scalar('MAE/train', epoch_mae.get_avg())
+        self.writer.add_scalar('Loss/train', epoch_loss.get_avg(), self.epoch)
+        self.writer.add_scalar('MSE/train', np.sqrt(epoch_mse.get_avg()), self.epoch)
+        self.writer.add_scalar('MAE/train', epoch_mae.get_avg(), self.epoch)
 
         model_state_dic = self.model.state_dict()
         save_path = os.path.join(self.save_dir, '{}_ckpt.tar'.format(self.epoch))
@@ -160,8 +160,8 @@ class RegTrainer(Trainer):
         logging.info('Epoch {} Val, MSE: {:.2f} MAE: {:.2f}, Cost {:.1f} sec'
                      .format(self.epoch, mse, mae, time.time()-epoch_start))
 
-        self.writer.add_scalar('MSE/test', mse)
-        self.writer.add_scalar('MAE/test', mae)
+        self.writer.add_scalar('MSE/test', mse, self.epoch)
+        self.writer.add_scalar('MAE/test', mae, self.epoch)
 
         model_state_dic = self.model.state_dict()
         if (2.0 * mse + mae) < (2.0 * self.best_mse + self.best_mae):
