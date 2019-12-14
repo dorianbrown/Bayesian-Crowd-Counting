@@ -6,6 +6,7 @@ import time
 import torch
 from torch import optim
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data.dataloader import default_collate
 import logging
 import numpy as np
@@ -54,7 +55,8 @@ class RegTrainer(Trainer):
                                           num_workers=args.num_workers*self.device_count,
                                           pin_memory=(True if x == 'train' else False))
                             for x in ['train', 'val']}
-        self.model = vgg19()
+        self.writer = SummaryWriter()
+        self.model = vgg19(args.downsample_ratio)
         self.model.to(self.device)
         self.optimizer = optim.Adam(self.model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 
@@ -125,6 +127,10 @@ class RegTrainer(Trainer):
         logging.info('Epoch {} Train, Loss: {:.2f}, MSE: {:.2f} MAE: {:.2f}, Cost {:.1f} sec'
                      .format(self.epoch, epoch_loss.get_avg(), np.sqrt(epoch_mse.get_avg()), epoch_mae.get_avg(),
                              time.time()-epoch_start))
+        self.writer.add_scalar('Loss/train', epoch_loss.get_avg())
+        self.writer.add_scalar('MSE/train', np.sqrt(epoch_mse.get_avg()))
+        self.writer.add_scalar('MAE/train', epoch_mae.get_avg())
+
         model_state_dic = self.model.state_dict()
         save_path = os.path.join(self.save_dir, '{}_ckpt.tar'.format(self.epoch))
         torch.save({
@@ -153,6 +159,9 @@ class RegTrainer(Trainer):
         mae = np.mean(np.abs(epoch_res))
         logging.info('Epoch {} Val, MSE: {:.2f} MAE: {:.2f}, Cost {:.1f} sec'
                      .format(self.epoch, mse, mae, time.time()-epoch_start))
+
+        self.writer.add_scalar('MSE/test', mse)
+        self.writer.add_scalar('MAE/test', mae)
 
         model_state_dic = self.model.state_dict()
         if (2.0 * mse + mae) < (2.0 * self.best_mse + self.best_mae):
