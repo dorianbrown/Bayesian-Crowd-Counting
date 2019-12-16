@@ -41,7 +41,6 @@ class RegTrainer(Trainer):
             self.device_count = 1
             logging.info(f"using cpu with {torch.get_num_threads()} threads")
 
-        self.downsample_ratio = args.downsample_ratio
         self.datasets = {x: Crowd(os.path.join(args.data_dir, x),
                                   args.crop_size,
                                   args.downsample_ratio,
@@ -56,7 +55,7 @@ class RegTrainer(Trainer):
                                           pin_memory=(True if x == 'train' else False))
                             for x in ['train', 'val']}
         self.writer = SummaryWriter()
-        self.model = vgg19(args.downsample_ratio)
+        self.model = vgg19()
         self.model.to(self.device)
         self.optimizer = optim.Adam(self.model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 

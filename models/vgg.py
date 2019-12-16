@@ -10,10 +10,9 @@ model_urls = {
 
 
 class VGG(nn.Module):
-    def __init__(self, features, downsample_ratio):
+    def __init__(self, features):
         super(VGG, self).__init__()
         self.features = features
-        self.downsample_ratio = downsample_ratio
         self.reg_layer = nn.Sequential(
             nn.Conv2d(512, 256, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
@@ -24,7 +23,7 @@ class VGG(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
-        x = F.upsample_bilinear(x, scale_factor=16/self.downsample_ratio)
+        x = F.upsample_bilinear(x, scale_factor=2)
         x = self.reg_layer(x)
         return torch.abs(x)
 
@@ -50,11 +49,11 @@ cfg = {
 }
 
 
-def vgg19(downsample_ratio):
+def vgg19():
     """VGG 19-layer model (configuration "E")
         model pre-trained on ImageNet
     """
-    model = VGG(make_layers(cfg['E']), downsample_ratio)
+    model = VGG(make_layers(cfg['E']))
     model.load_state_dict(model_zoo.load_url(model_urls['vgg19']), strict=False)
     return model
 

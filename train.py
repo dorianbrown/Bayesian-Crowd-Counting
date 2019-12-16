@@ -12,7 +12,6 @@ def parse_args():
                         help='training data directory')
     parser.add_argument('--save-dir', default='/home/teddy/vgg',
                         help='directory to save models.')
-
     parser.add_argument('--lr', type=float, default=1e-5,
                         help='the initial learning rate')
     parser.add_argument('--weight-decay', type=float, default=1e-4,
@@ -27,20 +26,17 @@ def parse_args():
                         help='the num of steps to log training information')
     parser.add_argument('--val-start', type=int, default=600,
                         help='the epoch start to val')
-
     parser.add_argument('--batch-size', type=int, default=1,
                         help='train batch size')
     parser.add_argument('--device', default='0', help='assign device')
     parser.add_argument('--num-workers', type=int, default=8,
                         help='the num of training process')
-
     parser.add_argument('--is-gray', type=bool, default=False,
                         help='whether the input image is gray')
     parser.add_argument('--crop-size', type=int, default=512,
                         help='the crop size of the train image')
     parser.add_argument('--downsample-ratio', type=int, default=8,
                         help='downsample ratio')
-
     parser.add_argument('--use-background', type=bool, default=True,
                         help='whether to use background modelling')
     parser.add_argument('--sigma', type=float, default=8.0,
